@@ -87,3 +87,11 @@ function editing_elementor_library_capability($args, $post_type)
   return $args;
 }
 add_filter('register_post_type_args', 'editing_elementor_library_capability', 10, 2);
+
+// Allow .vcf file upload on wordpress
+function enable_vcard_upload( $mime_types=array() ){
+	$mime_types['vcf'] = 'text/vcard';
+	$mime_types['vcard'] = 'text/vcard';
+	return $mime_types;
+}
+add_filter('upload_mimes', 'enable_vcard_upload' );
