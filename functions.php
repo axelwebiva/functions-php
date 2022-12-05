@@ -95,3 +95,31 @@ function enable_vcard_upload( $mime_types=array() ){
 	return $mime_types;
 }
 add_filter('upload_mimes', 'enable_vcard_upload' );
+
+
+// BEGIN -----  Move all .vcf file upload to specific foler '/wp-content/uploads/'
+add_filter('wp_handle_upload_prefilter', 'webiva_pre_upload');
+add_filter('wp_handle_upload', 'webiva_post_upload');
+
+function webiva_pre_upload($file){
+    add_filter('upload_dir', 'webiva_custom_upload_dir');
+    return $file;
+}
+
+function webiva_post_upload($fileinfo){
+    remove_filter('upload_dir', 'webiva_custom_upload_dir');
+    return $fileinfo;
+}
+
+function webiva_custom_upload_dir($path){    
+    $extension = substr(strrchr($_POST['name'],'.'),1);
+    if(!empty($path['error']) ||  $extension != 'vcf') { return $path; } //error or other filetype; do nothing. 
+    $customdir = '';
+    $path['path']    = str_replace($path['subdir'], '', $path['path']); //remove default subdir (year/month)
+    $path['url']     = str_replace($path['subdir'], '', $path['url']);      
+    $path['subdir']  = $customdir;
+    $path['path']   .= $customdir; 
+    $path['url']    .= $customdir;  
+    return $path;
+}
+// END -----  Move all .vcf file upload to specific foler '/wp-content/uploads/'
