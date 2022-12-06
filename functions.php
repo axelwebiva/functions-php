@@ -89,14 +89,13 @@ function editing_elementor_library_capability($args, $post_type)
 add_filter('register_post_type_args', 'editing_elementor_library_capability', 10, 2);
 
 // Remove RSS feed from WordPress
-function wp_disable_feeds() {
-wp_die( __('No feeds available!') );
+function itsme_disable_feed() {
+ wp_die( __( 'No feed available, please visit the <a href="'. esc_url( home_url( '/' ) ) .'">homepage</a>!' ) );
 }
-  
-add_action('do_feed', 'wp_disable_feeds', 1);
-add_action('do_feed_rdf', 'wp_disable_feeds', 1);
-add_action('do_feed_rss', 'wp_disable_feeds', 1);
-add_action('do_feed_rss2', 'wp_disable_feeds', 1);
-add_action('do_feed_atom', 'wp_disable_feeds', 1);
-add_action('do_feed_rss2_comments', 'wp_disable_feeds', 1);
-add_action('do_feed_atom_comments', 'wp_disable_feeds', 1);
+add_action('do_feed', 'itsme_disable_feed', 1);
+add_action('do_feed_rdf', 'itsme_disable_feed', 1);
+add_action('do_feed_rss', 'itsme_disable_feed', 1);
+add_action('do_feed_rss2', 'itsme_disable_feed', 1);
+add_action('do_feed_atom', 'itsme_disable_feed', 1);
+add_action('do_feed_rss2_comments', 'itsme_disable_feed', 1);
+add_action('do_feed_atom_comments', 'itsme_disable_feed', 1);
