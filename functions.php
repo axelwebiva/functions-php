@@ -123,3 +123,75 @@ function webiva_custom_upload_dir($path){
     return $path;
 }
 // END -----  Move all .vcf file upload to specific foler '/wp-content/uploads/'
+
+
+// Add content to empty cart page
+add_action( 'woocommerce_cart_is_empty', 'show_content_empty_cart' );
+function show_content_empty_cart() {
+   echo "<style>.empty-cart-template {display:block !important}</style>";
+}
+
+// Auto uncheck "Ship to a different address"
+add_filter( 'woocommerce_ship_to_different_address_checked', '__return_false' );
+
+// Add "+" and "-" button to shop
+function appel_styles_et_scripts() {
+  wp_enqueue_script( 'mon-fichier-javascript', get_stylesheet_directory_uri() . '/woocommerce/quantity-input-V1.js', array(), '1.0.0', true );
+}
+add_action( 'wp_enqueue_scripts', 'appel_styles_et_scripts' );
+wp_enqueue_style('styleCSS', get_stylesheet_directory_uri(). '/woocommerce/quantity-input-V1.css');
+
+/* cart-auto-update-V1 script with jQuery as a dependency, enqueued in the footer */
+add_action('wp_enqueue_scripts', 'tutsplus_enqueue_custom_js');
+function tutsplus_enqueue_custom_js() {
+    wp_enqueue_script('custom', get_stylesheet_directory_uri().'/woocommerce/cart-auto-update-V1.js', 
+    array('jquery'), false, true);
+}
+
+/**
+ * Rename "home" in woocommerce breadcrumb
+ */
+add_filter( 'woocommerce_breadcrumb_defaults', 'wcc_change_breadcrumb_home_text' );
+function wcc_change_breadcrumb_home_text( $defaults ) {
+    // Change the breadcrumb home text from 'Home' to 'Shop'
+	$defaults['home'] = 'Shop';
+	return $defaults;
+}
+
+/**
+ * Replace the home link URL
+ */
+add_filter( 'woocommerce_breadcrumb_home_url', 'woo_custom_breadrumb_home_url' );
+function woo_custom_breadrumb_home_url() {
+    return 'https://boulangerie.webivadev.ch/boutique/';
+}
+
+
+// /**
+//  * Chanages the "# in stock" text to "#" for WooCommerce
+//  */
+// add_filter( 'woocommerce_get_availability_text', 'webiva_custom_get_availability_text', 99, 2 );
+// function webiva_custom_get_availability_text( $availability, $product ) {
+//    $stock = $product->get_stock_quantity();
+//    if ( $product->is_in_stock() && $product->managing_stock() ) $availability = '' . $stock;
+//    return $availability;
+// }
+add_filter( 'woocommerce_get_price_html', 'change_variable_products_price_display', 10, 2 );
+function change_variable_products_price_display( $price, $product ) {
+
+    // Only for variable products type
+    if( ! $product->is_type('variable') ) return $price;
+
+    $prices = $product->get_variation_prices( true );
+
+    if ( empty( $prices['price'] ) )
+        return apply_filters( 'woocommerce_variable_empty_price_html', '', $product );
+
+    $min_price = current( $prices['price'] );
+    $max_price = end( $prices['price'] );
+    $prefix_html = '<span class="price-prefix">' . __('A partir de: ') . '</span>';
+
+    $prefix = $min_price !== $max_price ? $prefix_html : ''; // HERE the prefix
+
+    return apply_filters( 'woocommerce_variable_price_html', $prefix . wc_price( $min_price ) . $product->get_price_suffix(), $product );
+}
