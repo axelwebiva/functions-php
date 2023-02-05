@@ -68,10 +68,10 @@ function remove_menus(){
 	remove_menu_page( 'tools.php' ); // Tools
 // 	remove_menu_page( 'edit-tags.php?taxonomy=elementor_library_category' ); // elementor category
 // 	remove_menu_page( 'edit.php?post_type=elementor_library&tabs_group=library' ); // elementor category
-	remove_menu_page( 'edit.php?post_type=elementor_library' ); // Elementor Templates
+// 	remove_menu_page( 'edit.php?post_type=elementor_library' ); // Elementor Templates
 	remove_menu_page( 'elementor' ); // Elementor
 // 	remove_submenu_page( 'edit.php?post_type={$ptype}', 'edit-tags.php?taxonomy=elementor_library_category&amp;post_type={$ptype}' );
-	remove_menu_page( '/#menu-posts-elementor_library');
+// 	remove_menu_page( '/#menu-posts-elementor_library');
 	
 }
 add_action( 'admin_menu', 'remove_menus' , 999 );
