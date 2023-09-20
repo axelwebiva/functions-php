@@ -123,3 +123,17 @@ function webiva_custom_upload_dir($path){
     return $path;
 }
 // END -----  Move all .vcf file upload to specific foler '/wp-content/uploads/'
+
+/***  Auto redirect a user who isn't logged into the site ***/
+add_filter( 'pre_get_posts', 'swpm_auto_redirect_non_members' );
+function swpm_auto_redirect_non_members() {
+    if (is_admin()){
+        //Inside the admin dashboard. Nothing to do.
+        return;
+    }
+    //We are on the front-end. Lets check visitor's login status.
+    if( !SwpmMemberUtils::is_member_logged_in() && !is_page( array( 'membership-login', 'membership-join' )) ) {
+        wp_redirect( 'https://vod.zpo-cpc.ch/member-login/' );
+        exit;
+    }
+}
